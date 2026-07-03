@@ -169,6 +169,8 @@ design.
 - `diffPixels(baselinePng, candidatePng, { threshold, includeAA, flagPct })` → Tier C verdict
 - `cascade(baseline, candidate, { baselinePng, candidatePng, style, pixels })` → combined verdict
 - `sanityCheck(anchors, opts)` → fail-closed anchor validation
+- `verify(before, after, opts)` → `{ verdict: '1:1'|'BROKEN', pass, tiers, why }` — an agent/CI-shaped narration over `cascade()` (same verdict, no new judgment); `why` names the failing tier when `pass` is false
+- `fidelity(baseline, candidate, { style })` → `{ score, tiers: { structure, style }, explain }` — a continuous, monotonic, self-explaining structure+style closeness score (0–1); a companion metric alongside `cascade()`'s fail-closed pass/fail, not a replacement for it (pixel tier excluded — no PNGs required)
 - `openBrowser({ viewport, chromium })` → CDP browser handle
 - `loadAndExtract(browser, html, { tmpDir, name, viewport, cssHref, mountSelector })` → `{ struct, png }`
 - `renderReport(cards, { title, subtitle })` → HTML string

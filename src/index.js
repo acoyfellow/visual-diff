@@ -16,6 +16,11 @@ export { diffStyle, alignLCS, numClose, STYLE_PROPS, SIGNIFICANT } from './style
 export { diffPixels, contentBBox, PIXEL_FLAG_PCT } from './pixels.js';
 // Cascade + sanity anchors
 export { cascade, sanityCheck } from './cascade.js';
+// Agent/CI-shaped verdict (a narration layer over cascade, no new judgment)
+export { verify } from './verify.js';
+// Continuous design<->implementation fidelity score (structure+style; a companion
+// metric alongside cascade's fail-closed pass/fail, not a replacement for it)
+export { fidelity } from './fidelity.js';
 // Browser extraction (optional; needs a pinned Playwright Chromium)
 export { openBrowser, loadAndExtract, page, walkExpression } from './extract.js';
 export { resolveChromium } from './browser.js';
