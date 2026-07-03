@@ -140,6 +140,27 @@ const { ok, violations } = sanityCheck([
 if (!ok) throw new Error('gate is untrustworthy: ' + violations.join('; '));
 ```
 
+## CLI
+
+`bin/visual-diff.mjs` (installed as `visual-diff` when this package is
+installed globally or run via `npx`) wraps `verify()` and the browser
+extractor for any pipeline that can shell out — not just Node/agent callers.
+
+```sh
+npx @acoyfellow/visual-diff baseline.html candidate.html
+# 1:1  baseline.html vs candidate.html
+# tiers: {"A":true,"B":true,"C":true}
+
+npx @acoyfellow/visual-diff baseline.html candidate.html --markdown report.md
+# writes a GitHub-flavored markdown table + collapsible failure detail,
+# ready to post as a PR comment
+```
+
+Options: `--report <path>` (HTML), `--markdown <path>` (GFM), `--json` (raw
+`verify()` result), `--a11y` (add Tier D), `--perceptual` (SSIM Tier C),
+`--viewport WxH`. Exit code is `0` on `1:1`, `1` on `BROKEN`, `2` on a
+usage/runtime error — CI-usable from any language.
+
 ## Self-proof
 
 `npm run proof` renders two sample UIs — one **identical** to the baseline
@@ -174,6 +195,8 @@ design.
 - `openBrowser({ viewport, chromium })` → CDP browser handle
 - `loadAndExtract(browser, html, { tmpDir, name, viewport, cssHref, mountSelector })` → `{ struct, png }`
 - `renderReport(cards, { title, subtitle })` → HTML string
+- `renderMarkdown(cards, { title })` → GitHub-flavored markdown (a compact summary table + collapsible per-failure detail; PR-comment shaped, no embedded images)
+- `badgeFromFidelity(fidelityResult, { label })` / `badgeFromVerify(verifyResult, { label })` → shields.io endpoint-badge JSON (`{schemaVersion, label, message, color}`)
 - helpers: `multisetDiff`, `alignLCS`, `numClose`, `contentBBox`, `resolveChromium`, `page`, `walkExpression`
 
 ## License

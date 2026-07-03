@@ -4,6 +4,9 @@
   "description": "Framework-agnostic 3-tier visual-diff cascade: compare any two rendered DOM trees / screenshots (structure + computed style + pixels) for a fail-closed 1:1 verdict.",
   "type": "module",
   "main": "src/index.js",
+  "bin": {
+    "visual-diff": "./bin/visual-diff.mjs"
+  },
   "exports": {
     ".": "./src/index.js"
   },

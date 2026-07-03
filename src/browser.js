@@ -91,8 +91,19 @@ export async function openBrowser(opts = {}) {
   }
   if (!port) throw new Error('Chromium did not expose a DevTools port');
 
-  const targets = await fetch(`http://127.0.0.1:${port}/json`).then((r) => r.json());
-  const target = targets.find((x) => x.type === 'page');
+  // The DevTools port can be open before Chromium registers its default page
+  // target, so a single immediate /json fetch can transiently return no page
+  // target yet (found via CLI testing: openBrowser() would throw reading
+  // undefined.webSocketDebuggerUrl on a fast first call). Poll the same way
+  // the port-file wait above already does.
+  let target;
+  for (let i = 0; i < 100; i++) {
+    const targets = await fetch(`http://127.0.0.1:${port}/json`).then((r) => r.json()).catch(() => []);
+    target = targets.find((x) => x.type === 'page');
+    if (target) break;
+    await sleep(30);
+  }
+  if (!target) { try { child.kill(); } catch { /* noop */ } throw new Error('Chromium did not expose a page target'); }
   const ws = new WebSocket(target.webSocketDebuggerUrl);
   await new Promise((r) => (ws.onopen = r));
 
