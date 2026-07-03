@@ -33,4 +33,6 @@ export { diffPerceptual, ssim } from './perceptual.js';
 export { openBrowser, loadAndExtract, page, walkExpression } from './extract.js';
 export { resolveChromium } from './browser.js';
 // Reporting
-export { renderReport } from './report.js';
+export { renderReport, renderMarkdown } from './report.js';
+// shields.io endpoint-badge JSON formatters (pure formatting over verify/fidelity)
+export { badgeFromFidelity, badgeFromVerify } from './badge.js';

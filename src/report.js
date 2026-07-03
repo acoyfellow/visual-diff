@@ -52,3 +52,51 @@ export function renderReport(cards, opts = {}) {
 ${cardHtml}
 </body>`;
 }
+
+/**
+ * A compact GitHub-flavored-markdown report: one summary table plus a short
+ * detail line per failing pair (no embedded images — markdown/PR-comment
+ * shaped, unlike renderReport's full HTML page). Same input contract as
+ * renderReport, so a CI step can produce both from one cascade run.
+ *
+ * @param {Array<{name, result}>} cards  each `result` is a cascade() return
+ * @param {{title?:string}} [opts]
+ * @returns {string} a GitHub-flavored markdown document
+ */
+export function renderMarkdown(cards, opts = {}) {
+  const title = opts.title || 'visual-diff';
+  const allPass = cards.every((c) => c.result.pass);
+  const rows = cards.map(({ name, result: r }) => {
+    const cell = (tier) => (tier === null || tier === undefined) ? '—' : (tier ? '✅' : '❌');
+    return `| ${mdEsc(name)} | ${r.pass ? '✅ 1:1' : '❌ BROKEN'} | ${cell(r.tiers.A)} | ${cell(r.tiers.B)} | ${cell(r.tiers.C)} | ${cell(r.tiers.D)} |`;
+  });
+
+  const details = cards
+    .filter(({ result: r }) => !r.pass)
+    .map(({ name, result: r }) => {
+      const lines = [];
+      if (r.A && !r.A.pass) {
+        const miss = fmtObj(r.A.control.missingInCandidate);
+        const extra = fmtObj(r.A.control.extraInCandidate);
+        lines.push(`structure — missing: \`${miss || '{}'}\` extra: \`${extra || '{}'}\``);
+      }
+      if (r.B && !r.B.pass) {
+        const named = (r.B.deltas || []).slice(0, 4).map((d) => `${d.tag}.${d.prop} ${d.baseline}→${d.candidate}`).join('; ');
+        lines.push(`style — ${named}`);
+      }
+      if (r.C && !r.C.pass) lines.push(`pixels — ${r.C.pct}% differ`);
+      if (r.D && !r.D.pass) lines.push(`a11y — missing: \`${fmtObj(r.D.missing) || '{}'}\` extra: \`${fmtObj(r.D.extra) || '{}'}\``);
+      return `<details>\n<summary>${mdEsc(name)} — why it failed</summary>\n\n${lines.map((l) => `- ${l}`).join('\n')}\n\n</details>`;
+    });
+
+  return [
+    `### ${mdEsc(title)} — ${allPass ? '✅ all pairs 1:1' : '❌ one or more pairs BROKEN'}`,
+    '',
+    '| component | verdict | A structure | B style | C pixels | D a11y |',
+    '|---|---|---|---|---|---|',
+    ...rows,
+    ...(details.length ? ['', ...details] : []),
+  ].join('\n');
+}
+
+const mdEsc = (s) => String(s).replace(/\|/g, '\\|');
