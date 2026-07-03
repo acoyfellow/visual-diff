@@ -1,0 +1,52 @@
+{
+  "experiment": "E-FIDELITY",
+  "criterion": "score is MONOTONIC as defects are added, in steps, and EXPLAINABLE (names the tier + magnitude)",
+  "perfect": {
+    "score": 1,
+    "structure": {
+      "score": 1,
+      "pass": true,
+      "missing": 0,
+      "extra": 0
+    },
+    "style": {
+      "score": 1,
+      "pass": true,
+      "deltaCount": 0
+    },
+    "explain": "no defects"
+  },
+  "styleRegression": {
+    "score": 0.8333,
+    "structure": {
+      "score": 1,
+      "pass": true,
+      "missing": 0,
+      "extra": 0
+    },
+    "style": {
+      "score": 0.6666666666666667,
+      "pass": false,
+      "deltaCount": 1
+    },
+    "explain": "style -33.3pp (1 property deltas)"
+  },
+  "styleAndStructureRegression": {
+    "score": 0.6667,
+    "structure": {
+      "score": 0.6666666666666667,
+      "pass": false,
+      "missing": 1,
+      "extra": 0
+    },
+    "style": {
+      "score": 0.6666666666666667,
+      "pass": false,
+      "deltaCount": 1
+    },
+    "explain": "structure -33.3pp (1 missing, 0 extra); style -33.3pp (1 property deltas)"
+  },
+  "monotonic": true,
+  "explainable": true,
+  "anchorsHeld": true
+}

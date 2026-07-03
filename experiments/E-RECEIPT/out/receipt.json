@@ -1,0 +1,19 @@
+{
+  "experiment": "E-RECEIPT",
+  "criterion": "a valid receipt verifies; a tampered receipt FAILS verification (tamper-evidence)",
+  "receipt": {
+    "payload": {
+      "verdict": "1:1",
+      "tiers": {
+        "A": true,
+        "B": true,
+        "C": null
+      },
+      "at": "2026-07-02T00:00:00.000Z"
+    },
+    "sig": "e11c251cc4347d5a…"
+  },
+  "validVerifies": true,
+  "tamperCaught": true,
+  "anchorsHeld": true
+}

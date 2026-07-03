@@ -1,0 +1,12 @@
+{
+  "experiment": "E-VID",
+  "criterion": "identical anim PASSES; broken transition FLAGGED at the exact divergent frame (index 1)",
+  "identical": {
+    "pass": true
+  },
+  "broken": {
+    "pass": false,
+    "firstDivergence": 1
+  },
+  "anchorsHeld": true
+}

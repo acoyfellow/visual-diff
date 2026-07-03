@@ -1,0 +1,28 @@
+{
+  "experiment": "E-MCP",
+  "criterion": "agent-shaped verify() returns correct verdict on real E03 defects",
+  "results": [
+    {
+      "component": "checkbox",
+      "expected": "BROKEN",
+      "got": "BROKEN",
+      "held": true,
+      "why": "structure: {\"span\":1,\"svg\":1,\"path\":1}"
+    },
+    {
+      "component": "switch",
+      "expected": "BROKEN",
+      "got": "BROKEN",
+      "held": true,
+      "why": "structure: {\"div\":1}"
+    },
+    {
+      "component": "button",
+      "expected": "1:1",
+      "got": "1:1",
+      "held": true,
+      "why": null
+    }
+  ],
+  "allHeld": true
+}

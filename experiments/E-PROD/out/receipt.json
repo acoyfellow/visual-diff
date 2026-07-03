@@ -1,0 +1,25 @@
+{
+  "experiment": "E-PROD",
+  "criterion": "a SECOND non-browser producer feeds the SAME cascade and gets correct verdicts",
+  "identical": {
+    "pass": true,
+    "tiers": {
+      "A": true,
+      "B": true,
+      "C": null
+    }
+  },
+  "broken": {
+    "pass": false,
+    "tiers": {
+      "A": false,
+      "B": true,
+      "C": null
+    },
+    "missing": {
+      "svg": 1,
+      "path": 1
+    }
+  },
+  "anchorsHeld": true
+}

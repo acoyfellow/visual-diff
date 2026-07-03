@@ -1,0 +1,20 @@
+{
+  "experiment": "E-PERCEPT",
+  "criterion": "perceptual PASSES anti-alias noise AND FLAGS a real 1px shift (raw pixelmatch flags both)",
+  "raw": {
+    "noisyDiffPx": 0,
+    "shiftDiffPx": 64,
+    "flagsBoth": false
+  },
+  "perceptual": {
+    "noisy": {
+      "pass": true,
+      "ssim": 1
+    },
+    "shift": {
+      "pass": false,
+      "ssim": 0.94102
+    }
+  },
+  "perceptualSeparates": true
+}

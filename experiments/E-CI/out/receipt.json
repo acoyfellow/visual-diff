@@ -1,0 +1,9 @@
+{
+  "experiment": "E-CI",
+  "criterion": "gate runs green on real fixtures AND fails closed on a simulated regression",
+  "measuredPassRate": 1,
+  "priorFloor": 0,
+  "gateOk": true,
+  "wouldCatchRegression": true,
+  "anchorsHeld": true
+}

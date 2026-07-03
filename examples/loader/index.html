@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>visual-diff · the cascade converges</title>
+<style>
+  :root{
+    --bg:#05060a; --ink:#e9edf6; --dim:#5a6377;
+    --a:#43e0a0;  /* structure  */
+    --b:#7aa2ff;  /* style      */
+    --c:#ff5da2;  /* pixels     */
+    --gold:#ffd24a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);
+    font:500 15px/1.4 ui-monospace,"SF Mono",Menlo,monospace;overflow:hidden}
+  #stage{position:fixed;inset:0;display:grid;place-items:center;}
+  canvas{position:absolute;inset:0;width:100%;height:100%}
+
+  /* version switch — the only chrome */
+  .rail{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);
+    display:flex;gap:8px;z-index:20;padding:6px;border-radius:999px;
+    background:rgba(255,255,255,.04);backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.08)}
+  .rail button{all:unset;cursor:pointer;font:600 11px/1 ui-monospace,monospace;
+    letter-spacing:.12em;text-transform:uppercase;color:var(--dim);
+    padding:9px 14px;border-radius:999px;transition:.25s}
+  .rail button[data-on]{color:#05060a;background:var(--gold);
+    box-shadow:0 0 24px -4px var(--gold)}
+  .hint{position:fixed;top:20px;left:0;right:0;text-align:center;color:var(--dim);
+    font-size:11px;letter-spacing:.22em;text-transform:uppercase;z-index:20}
+  .seed{position:fixed;top:20px;right:22px;color:var(--dim);font-size:10px;
+    letter-spacing:.14em;z-index:20;opacity:.6}
+</style>
+</head>
+<body>
+<div class="hint">visual-diff — three judges, one verdict · click to reseed</div>
+<div class="seed" id="seed"></div>
+<div id="stage"><canvas id="c"></canvas></div>
+<div class="rail">
+  <button data-v="1" data-on>I · constraint</button>
+  <button data-v="2">II · level-up</button>
+  <button data-v="3">III · get-fired</button>
+</div>
+
+<script type="module">
+/* ─────────────────────────────────────────────────────────────────────────
+   THE STORY (before the editor): three tiers — Structure, Style, Pixels —
+   each an independent judge that only sees part of the truth. They circle
+   the same subject, disagree, then CONVERGE. The verdict lives where all
+   three overlap. PASS = A∧B∧C. That intersection is the whole product.
+   Randomness: each load draws a different "defect" the judges hunt, a
+   different convergence rhythm, and a different final chord — so no two
+   loads are the same run.
+   ───────────────────────────────────────────────────────────────────────── */
+
+const c = document.getElementById('c');
+const g = c.getContext('2d');
+let W,H,DPR;
+function fit(){ DPR=Math.min(devicePixelRatio||1,2); W=innerWidth;H=innerHeight;
+  c.width=W*DPR;c.height=H*DPR;g.setTransform(DPR,0,0,DPR,0,0); }
+addEventListener('resize',fit); fit();
+
+const rnd=(a=1,b=0)=>b+Math.random()*(a-b);
+const pick=a=>a[(Math.random()*a.length)|0];
+const TAU=Math.PI*2;
+const COL={A:'#43e0a0',B:'#7aa2ff',C:'#ff5da2',gold:'#ffd24a',ink:'#e9edf6',dim:'#5a6377'};
+
+let seed, world, version=1, t0=performance.now();
+
+/* a fresh "run" — the randomness that makes it never-before-seen */
+function reseed(){
+  seed = Array.from({length:3},()=>Math.random().toString(36).slice(2,7)).join('·');
+  document.getElementById('seed').textContent = 'seed '+seed;
+  const defect = pick(['missing element','1px shift','recolor','wrong padding','dropped svg','none — 1:1']);
+  world = {
+    defect,
+    truthful: defect==='none — 1:1',
+    tempo: rnd(1.5,0.75),
+    startAngles:{A:rnd(TAU),B:rnd(TAU),C:rnd(TAU)},
+    orbit: rnd(0.85,0.55),                 // how tight they converge
+    chord: pick(['minor→major','open fifths','one held note','shattered arp']),
+    particles: 60 + (Math.random()*120|0),
+    verdictAt: rnd(9.5,7.0),               // seconds until the verdict lands
+  };
+  t0 = performance.now();
+}
+reseed();
+c.parentElement.addEventListener('click', reseed);
+addEventListener('click', e=>{ if(e.target.closest('.rail')) return; }); // rail handled below
+
+/* ── shared field: the three judges as orbiting lenses ───────────────────── */
+function judges(t, conv){
+  // conv 0→1 : from scattered/disagreeing to converged on center
+  const cx=W/2, cy=H/2;
+  const spread = (1-conv) * Math.min(W,H)*0.34;
+  const r = Math.min(W,H) * (0.14 + 0.02*Math.sin(t*2));
+  const out=[];
+  for(const [k,base] of Object.entries(world.startAngles)){
+    const ang = base + t*world.tempo*(k==='A'?0.6:k==='B'?-0.8:1.05);
+    const wobble = (1-conv)*Math.sin(t*3+ang)*spread*0.4;
+    out.push({
+      k, col:COL[k],
+      x: cx + Math.cos(ang)*spread + wobble,
+      y: cy + Math.sin(ang)*spread + wobble*0.6,
+      r
+    });
+  }
+  return {cx,cy,out};
+}
+
+/* ═══════════════════════ VERSION I — CONSTRAINT (zero text) ══════════════ */
+/* the story told only in motion/shape/color: three lenses circle, overlap,
+   and the verdict blooms in the intersection. no words. a game boot. */
+function v1(t){
+  g.fillStyle='rgba(5,6,10,0.22)'; g.fillRect(0,0,W,H); // trails
+  const conv = Math.min(1, t/world.verdictAt);
+  const {cx,cy,out}=judges(t,conv);
+
+  // subject at center: a tiny "component" (a box + a checkmark that may be missing)
+  g.save();
+  g.translate(cx,cy);
+  const s=Math.min(W,H)*0.05*(0.9+0.1*Math.sin(t*4));
+  g.globalAlpha=.9;
+  g.strokeStyle=COL.ink; g.lineWidth=2; g.strokeRect(-s,-s,2*s,2*s);
+  if(world.truthful || conv<0.9){ // the checkmark: present, until "verdict" reveals defect
+    g.strokeStyle=COL.gold; g.lineWidth=3; g.beginPath();
+    g.moveTo(-s*.4,0); g.lineTo(-s*.05,s*.4); g.lineTo(s*.5,-s*.4); g.stroke();
+  }
+  g.restore();
+
+  // three lenses, additive light — where they overlap, white/gold verdict
+  g.globalCompositeOperation='lighter';
+  for(const j of out){
+    const grd=g.createRadialGradient(j.x,j.y,0,j.x,j.y,j.r);
+    grd.addColorStop(0,j.col); grd.addColorStop(1,'transparent');
+    g.fillStyle=grd; g.globalAlpha=.55;
+    g.beginPath(); g.arc(j.x,j.y,j.r,0,TAU); g.fill();
+    // the lens ring
+    g.globalAlpha=.9; g.strokeStyle=j.col; g.lineWidth=1.5;
+    g.beginPath(); g.arc(j.x,j.y,j.r,0,TAU); g.stroke();
+  }
+  // verdict bloom at the centroid when converged
+  if(conv>0.72){
+    const p=(conv-0.72)/0.28;
+    const R=Math.min(W,H)*0.16*p;
+    const grd=g.createRadialGradient(cx,cy,0,cx,cy,R);
+    const col = world.truthful? COL.gold : COL.C;
+    grd.addColorStop(0,col); grd.addColorStop(0.6,col+'66'); grd.addColorStop(1,'transparent');
+    g.fillStyle=grd; g.globalAlpha=.9*p; g.beginPath(); g.arc(cx,cy,R,0,TAU); g.fill();
+  }
+  g.globalCompositeOperation='source-over';
+}
+
+/* ═══════════════════ VERSION II — LEVEL-UP (Stripe × PS5 boot) ═══════════ */
+/* progress as leveling: each tier "locks in" with a satisfying snap, a rising
+   XP bar of light, gradient-sheen, a boot chime feel. */
+let bars=null;
+function v2(t){
+  g.fillStyle=COL.bg||'#05060a'; g.fillStyle='#05060a'; g.fillRect(0,0,W,H);
+  if(!bars) bars=[
+    {k:'A',label:'STRUCTURE',col:COL.A,fill:0,at:world.verdictAt*0.30},
+    {k:'B',label:'STYLE',   col:COL.B,fill:0,at:world.verdictAt*0.58},
+    {k:'C',label:'PIXELS',  col:COL.C,fill:0,at:world.verdictAt*0.86},
+  ];
+  const cx=W/2, top=H*0.30, bw=Math.min(W*0.62,560), bh=16, gap=64;
+
+  // PS5-ish ambient sheen sweeping bg
+  const sweep=(t*90)%(W+400)-200;
+  const sg=g.createLinearGradient(sweep-200,0,sweep+200,H);
+  sg.addColorStop(0,'transparent');sg.addColorStop(.5,'rgba(122,162,255,0.06)');sg.addColorStop(1,'transparent');
+  g.fillStyle=sg; g.fillRect(0,0,W,H);
+
+  let allLocked=true;
+  bars.forEach((b,i)=>{
+    const y=top+i*gap;
+    const target = t>=b.at?1: Math.max(0,(t-(b.at-1.4))/1.4);
+    b.fill += (Math.max(0,Math.min(1,target))-b.fill)*0.14;
+    const locked=b.fill>0.985; if(!locked) allLocked=false;
+    // track
+    g.fillStyle='rgba(255,255,255,.06)';
+    roundRect(cx-bw/2,y,bw,bh,bh/2); g.fill();
+    // fill with gradient sheen
+    const grd=g.createLinearGradient(cx-bw/2,0,cx-bw/2+bw,0);
+    grd.addColorStop(0,b.col+'aa'); grd.addColorStop(1,b.col);
+    g.fillStyle=grd; roundRect(cx-bw/2,y,bw*b.fill,bh,bh/2); g.fill();
+    // moving glint on the leading edge
+    if(b.fill>0.02 && b.fill<0.99){
+      const ex=cx-bw/2+bw*b.fill;
+      const gg=g.createRadialGradient(ex,y+bh/2,0,ex,y+bh/2,26);
+      gg.addColorStop(0,'#fff');gg.addColorStop(1,'transparent');
+      g.globalCompositeOperation='lighter'; g.fillStyle=gg;
+      g.beginPath();g.arc(ex,y+bh/2,26,0,TAU);g.fill();
+      g.globalCompositeOperation='source-over';
+    }
+    // label + lock check
+    g.font='600 12px ui-monospace,monospace'; g.textBaseline='middle';
+    g.fillStyle=locked?b.col:COL.dim; g.textAlign='left';
+    g.fillText(b.label, cx-bw/2, y-14);
+    g.textAlign='right';
+    g.fillStyle=locked?COL.gold:COL.dim;
+    g.fillText(locked?'✓ LOCKED':(b.fill*100|0)+'%', cx+bw/2, y-14);
+    if(locked){ // snap ring
+      const pr=(1-Math.min(1,(t-b.at)/0.5));
+      if(pr>0){ g.strokeStyle=b.col; g.globalAlpha=pr; g.lineWidth=2;
+        roundRect(cx-bw/2-6,y-6,bw+12,bh+12,(bh+12)/2); g.stroke(); g.globalAlpha=1; }
+    }
+  });
+
+  // the verdict badge levels up when all three lock
+  const vy=top+3*gap+30;
+  g.textAlign='center';g.font='800 clamp(28px,6vw,72px)/1 ui-monospace,monospace';
+  if(allLocked){
+    const pulse=0.7+0.3*Math.sin(t*6);
+    const col=world.truthful?COL.gold:COL.C;
+    g.shadowColor=col; g.shadowBlur=40*pulse;
+    g.fillStyle=col;
+    g.fillText(world.truthful?'1 : 1':'BROKEN', cx, vy+40);
+    g.shadowBlur=0;
+    g.font='600 12px ui-monospace,monospace'; g.fillStyle=COL.dim;
+    g.fillText(world.truthful?'A ∧ B ∧ C — all three agree':('caught: '+world.defect), cx, vy+92);
+  }else{
+    g.fillStyle='rgba(233,237,246,0.15)';
+    g.fillText('A ∧ B ∧ C', cx, vy+40);
+  }
+}
+function roundRect(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);
+  g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+
+/* ═══════════════ VERSION III — GET-FIRED (screenshot-before-they-do) ═════ */
+/* the one a "serious SaaS" rejects: a brutalist oscilloscope autopsy. three
+   raw signal traces (A/B/C) scream across a CRT, glitch, tear, and when they
+   phase-lock the whole screen SNAPS to a single verdict frame. loud, alive. */
+let parts=null;
+function v3(t){
+  // CRT afterglow
+  g.fillStyle='rgba(5,6,10,0.14)'; g.fillRect(0,0,W,H);
+  const conv=Math.min(1,t/world.verdictAt);
+  if(!parts) parts=Array.from({length:world.particles},()=>({
+    x:rnd(W),y:rnd(H),vx:rnd(1,-1),vy:rnd(1,-1),k:pick(['A','B','C'])}));
+
+  // scanlines
+  g.globalAlpha=.05; g.fillStyle='#fff';
+  for(let y=0;y<H;y+=3) g.fillRect(0,y,W,1);
+  g.globalAlpha=1;
+
+  // three signal traces, converging in phase as conv→1
+  const mid=H/2, amp=(1-conv)*H*0.28 + H*0.02;
+  for(const k of ['A','B','C']){
+    const col=COL[k];
+    const phase=world.startAngles[k];
+    const jitter=(1-conv)*22;
+    g.beginPath();
+    for(let x=0;x<=W;x+=6){
+      const f = (k==='A'?7:k==='B'?11:13) * (0.4+conv*0.6);
+      const y = mid + Math.sin(x/W*TAU*f + t*3 + phase)*amp
+              + (Math.random()-0.5)*jitter
+              + (k==='A'?-1:k==='C'?1:0)*(1-conv)*40;
+      x===0?g.moveTo(x,y):g.lineTo(x,y);
+    }
+    g.strokeStyle=col; g.lineWidth=2; g.shadowColor=col; g.shadowBlur=12;
+    g.globalCompositeOperation='lighter'; g.stroke();
+    g.shadowBlur=0; g.globalCompositeOperation='source-over';
+  }
+
+  // datamosh particles drifting toward the centroid as they "agree"
+  g.globalCompositeOperation='lighter';
+  for(const p of parts){
+    p.x+=p.vx*(1-conv)*3; p.y+=p.vy*(1-conv)*3;
+    p.x+= (W/2-p.x)*conv*0.04; p.y+=(H/2-p.y)*conv*0.04;
+    if(p.x<0||p.x>W)p.vx*=-1; if(p.y<0||p.y>H)p.vy*=-1;
+    g.fillStyle=COL[p.k]; g.globalAlpha=.6;
+    g.fillRect(p.x,p.y,2,2);
+  }
+  g.globalCompositeOperation='source-over'; g.globalAlpha=1;
+
+  // random RGB tear glitches (the "get fired" energy)
+  if(Math.random()<0.06+conv*0.10){
+    const ty=rnd(H), th=rnd(40,6), off=rnd(30,-30)*(1-conv+0.3);
+    const img=g.getImageData(0,ty,W,th);
+    g.putImageData(img, off, ty);
+    g.fillStyle=pick([COL.A,COL.B,COL.C])+'22'; g.fillRect(0,ty,W,th);
+  }
+
+  // PHASE-LOCK → verdict SNAP
+  if(conv>0.9){
+    const p=(conv-0.9)/0.1;
+    g.fillStyle=`rgba(5,6,10,${p*0.86})`; g.fillRect(0,0,W,H);
+    const col=world.truthful?COL.gold:COL.C;
+    g.textAlign='center';g.textBaseline='middle';
+    g.font=`900 clamp(48px,14vw,180px)/1 ui-monospace,monospace`;
+    g.shadowColor=col;g.shadowBlur=60*p;
+    // chromatic aberration verdict
+    const txt=world.truthful?'1:1':'BROKEN';
+    g.fillStyle='#ff004022'; g.fillText(txt,W/2-4,H/2);
+    g.fillStyle='#00ffff22'; g.fillText(txt,W/2+4,H/2);
+    g.fillStyle=col; g.fillText(txt,W/2,H/2);
+    g.shadowBlur=0;
+    g.font='600 13px ui-monospace,monospace';g.fillStyle=COL.dim;
+    g.fillText(world.truthful?'STRUCTURE ∧ STYLE ∧ PIXELS — phase-locked'
+      :('DEFECT LOCKED: '+world.defect.toUpperCase()), W/2, H/2+ (world.truthful?90:100));
+  }
+}
+
+/* ── loop + version switch ────────────────────────────────────────────────*/
+const RENDER={1:v1,2:v2,3:v3};
+function frame(now){
+  const t=(now-t0)/1000;
+  RENDER[version](t);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+document.querySelector('.rail').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b) return;
+  version=+b.dataset.v; bars=null; parts=null; reseed();
+  [...document.querySelectorAll('.rail button')].forEach(x=>x.toggleAttribute('data-on',x===b));
+});
+</script>
+</body>
+</html>

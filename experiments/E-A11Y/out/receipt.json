@@ -1,0 +1,19 @@
+{
+  "experiment": "E-A11Y",
+  "criterion": "a11y-equivalent PASSES; aria-checked regression FLAGGED (a defect A/B/C would miss)",
+  "equivalent": {
+    "pass": true,
+    "missing": {},
+    "extra": {}
+  },
+  "brokenA11y": {
+    "pass": false,
+    "missing": {
+      "checkbox|role=checkbox|aria-checked=true": 1
+    },
+    "extra": {
+      "checkbox|role=checkbox|aria-checked=false": 1
+    }
+  },
+  "anchorsHeld": true
+}
