@@ -52,12 +52,13 @@ vendors themselves use for visual equivalence.
 ## Install
 
 ```sh
-npm install visual-diff
+npm install @acoyfellow/visual-diff
 # for Tier C screenshots + the browser extractor, install a pinned Chromium:
 npx playwright install chromium
 ```
 
-`pixelmatch` and `pngjs` are the only runtime dependencies. The browser
+`pixelmatch`, `pngjs`, and the lightweight `ws` client are the only runtime
+dependencies. The browser
 extractor drives a **pinned Playwright Chromium** over raw CDP (no `playwright`
 runtime dependency, and never the OS "Chrome" app) so screenshots are
 deterministic. Point it at a specific binary with `VISUAL_DIFF_CHROMIUM` if you
@@ -71,7 +72,7 @@ The tiers operate on a normalized *render* object — you can produce it however
 you like (the built-in extractor, your own walk, or fixtures):
 
 ```js
-import { diffStructure, diffStyle, diffPixels, cascade } from 'visual-diff';
+import { diffStructure, diffStyle, diffPixels, cascade } from '@acoyfellow/visual-diff';
 
 const A = diffStructure(baseline, candidate);   // { pass, control, whole, missingSvg }
 const B = diffStyle(baseline, candidate);       // { pass, deltas: [{tag, prop, baseline, candidate}] }
@@ -102,7 +103,7 @@ A **render** looks like:
 ### End-to-end with the browser extractor
 
 ```js
-import { openBrowser, loadAndExtract, cascade, renderReport } from 'visual-diff';
+import { openBrowser, loadAndExtract, cascade, renderReport } from '@acoyfellow/visual-diff';
 import { writeFileSync } from 'node:fs';
 
 const b = await openBrowser({ viewport: { width: 640, height: 320 } });
@@ -130,7 +131,7 @@ both sides render under identical CSS.
 ### Sanity anchors
 
 ```js
-import { sanityCheck } from 'visual-diff';
+import { sanityCheck } from '@acoyfellow/visual-diff';
 
 const { ok, violations } = sanityCheck([
   { name: 'identical', expect: 'pass',   baseline, candidate: baselineCopy, baselinePng, candidatePng },

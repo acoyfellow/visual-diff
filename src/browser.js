@@ -17,6 +17,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import WebSocket from 'ws';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 

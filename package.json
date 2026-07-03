@@ -1,5 +1,5 @@
 {
-  "name": "visual-diff",
+  "name": "@acoyfellow/visual-diff",
   "version": "0.1.0",
   "description": "Framework-agnostic 3-tier visual-diff cascade: compare any two rendered DOM trees / screenshots (structure + computed style + pixels) for a fail-closed 1:1 verdict.",
   "type": "module",
@@ -29,11 +29,15 @@
   ],
   "license": "MIT",
   "author": "acoyfellow",
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18"
   },
   "dependencies": {
     "pixelmatch": "^5.3.0",
-    "pngjs": "^7.0.0"
+    "pngjs": "^7.0.0",
+    "ws": "^8.18.3"
   }
 }
