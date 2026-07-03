@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: test + self-proof (fail-closed)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      # Frozen-lockfile install: never silently accept a lockfile drift.
+      - run: npm ci
+      # Security gate: fail on any high/critical advisory. This is the
+      # self-hardening ratchet — tighten severity/scope here over time, never
+      # loosen it.
+      - run: npm audit --audit-level=high
+      # Unit tests: the pure tiers + every promoted module (verify, fidelity,
+      # a11y, temporal, receipt, perceptual) + the producer-agnosticism
+      # contract test.
+      - run: npm test
+      # The real self-proof: a pinned Playwright Chromium renders an identical
+      # pair (must PASS) and a deliberately broken pair (must be FLAGGED) —
+      # the sanity-anchor pattern applied to the library's own CI. This is the
+      # VALIDITY gate: it runs on every push, fail-closed, not just locally.
+      - run: npx playwright install --with-deps chromium
+      - run: npm run proof
+      - name: upload self-proof report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: self-proof-report
+          path: examples/out/REPORT.html
+          if-no-files-found: warn
