@@ -1,0 +1,73 @@
+{
+  "experiment": "01-pixel-diff",
+  "method": "React canonical (react-dom/server renderToStaticMarkup on @cloudflare/kumo) vs native Svelte (svelte/compiler generate:server + svelte/server render on generated/libraries/svelte/components), both pages load kumo-standalone.css at an identical fixed origin, screenshotted headless via Playwright Chrome-for-Testing (--headless=new --screenshot, device-scale-factor=1, forced white bg), diffed with pixelmatch (threshold=0.1, includeAA=true). % is measured over the component content bounding box (not the whole viewport). flag threshold = 1% of bbox pixels.",
+  "viewport": "240x120",
+  "threshold": 0.1,
+  "include_aa": true,
+  "flag_pct": 1,
+  "pct_basis": "component content bounding box (non-white union of both renders)",
+  "checkbox_diff_pct": 5.5785,
+  "switch_diff_pct": 38.2943,
+  "button_diff_pct": 0,
+  "raw": {
+    "checkbox": {
+      "width": 240,
+      "height": 120,
+      "bbox": {
+        "x": 21,
+        "y": 21,
+        "w": 22,
+        "h": 22
+      },
+      "bbox_area": 484,
+      "viewport_px": 28800,
+      "diff_px": 27,
+      "diff_pct": 5.5785,
+      "diff_pct_viewport": 0.0938
+    },
+    "switch": {
+      "width": 240,
+      "height": 120,
+      "bbox": {
+        "x": 21,
+        "y": 21,
+        "w": 46,
+        "h": 26
+      },
+      "bbox_area": 1196,
+      "viewport_px": 28800,
+      "diff_px": 458,
+      "diff_pct": 38.2943,
+      "diff_pct_viewport": 1.5903
+    },
+    "button": {
+      "width": 240,
+      "height": 120,
+      "bbox": {
+        "x": 21,
+        "y": 21,
+        "w": 87,
+        "h": 42
+      },
+      "bbox_area": 3654,
+      "viewport_px": 28800,
+      "diff_px": 0,
+      "diff_pct": 0,
+      "diff_pct_viewport": 0
+    }
+  },
+  "catches_known_defects": true,
+  "false_positive_on_button": false,
+  "verdict": {
+    "checkbox": "FLAG (differs)",
+    "switch": "FLAG (differs)",
+    "button": "pass"
+  },
+  "notes": [
+    "Checkbox defect (native has no checkmark + fill-only box) is caught: the checkmark glyph region is a solid block of mismatched pixels in checkbox.diff.png.",
+    "Switch defect (native: no blue track, tiny thumb parked left, wrong size h-5/w-10 vs React h-4.5/w-9) is caught massively: color + position + size all differ.",
+    "Button (known-good) is byte-identical HTML modulo React wrapper span; renders pixel-identical -> ~0% diff -> no false positive.",
+    "AA/font-noise sensitivity: because BOTH sides use the identical kumo-standalone.css, same fallback font, forced white background, device-scale-factor=1 and identical fixed origin, text anti-aliasing is deterministic and cancels out (button 0%). The pixel method is only trustworthy when layout/origin is pinned identically; it CANNOT distinguish a genuine 1px layout shift from a defect, so it flags size differences (switch) as defects too. It measures literal look, not intent.",
+    "Limitation: method requires identical positioning + same CSS; it is a strong FINAL 1:1 confirmation but blind to WHY (missing element vs recolor vs shift) — pair with DOM/computed-style diff for diagnosis."
+  ]
+}

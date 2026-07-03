@@ -1,0 +1,1254 @@
+{
+  "experiment": "02-computed-style-diff",
+  "method": "Vite serves React canonical (@cloudflare/kumo subpath exports) and the native generated svelte components under one page sharing kumo-standalone.css. Headless 'Google Chrome for Testing' is driven over CDP (Node global WebSocket, no Playwright/puppeteer dep). For each component the harness walks every element in the React subtree and the native subtree, records getComputedStyle for ~30 box/color/border props, aligns the two trees via an LCS over (depth:tag) signatures, then reports per-pair style deltas plus elements present in React but MISSING in native.",
+  "inputs": {
+    "react_canonical": "kumo-compiler/node_modules/@cloudflare/kumo (components/{checkbox,switch,button})",
+    "native": "kumo-compiler/generated/libraries/svelte/components/{checkbox,switch,button}.svelte",
+    "shared_css": "@cloudflare/kumo/dist/styles/kumo-standalone.css",
+    "browser": "Google Chrome for Testing @ ms-playwright/chromium-1228 (headless, via CDP)"
+  },
+  "fixtures": {
+    "checkbox": "checked=true, label='Accept'",
+    "switch": "checked=true, aria-label='demo'",
+    "button": "default variant, no children (compares the component's own box chrome)"
+  },
+  "per_component": {
+    "checkbox": {
+      "reactElementCount": 8,
+      "nativeElementCount": 3,
+      "missing_in_native": [
+        {
+          "tag": "div",
+          "depth": 0,
+          "role": null,
+          "ariaHidden": null,
+          "className": "inline-flex",
+          "styles": {
+            "display": "inline-flex",
+            "position": "static",
+            "width": "69.4219px",
+            "height": "20px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "24px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "svg",
+          "depth": 4,
+          "role": null,
+          "ariaHidden": null,
+          "className": "",
+          "styles": {
+            "display": "block",
+            "position": "static",
+            "width": "12px",
+            "height": "12px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "oklch(0.97 0 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "oklch(0.97 0 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "path",
+          "depth": 5,
+          "role": null,
+          "ariaHidden": null,
+          "className": "",
+          "styles": {
+            "display": "inline",
+            "position": "static",
+            "width": "auto",
+            "height": "auto",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "oklch(0.97 0 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "oklch(0.97 0 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "input",
+          "depth": 2,
+          "role": null,
+          "ariaHidden": "true",
+          "className": "",
+          "styles": {
+            "display": "block",
+            "position": "fixed",
+            "width": "1px",
+            "height": "1px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "-1px",
+            "marginRight": "-1px",
+            "marginBottom": "-1px",
+            "marginLeft": "-1px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "none",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "role": null,
+          "ariaHidden": null,
+          "className": "inline-flex items-center gap-1",
+          "styles": {
+            "display": "flex",
+            "position": "static",
+            "width": "45.4219px",
+            "height": "20px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "center",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        }
+      ],
+      "padding_deltas": [],
+      "margin_deltas": [
+        {
+          "tag": "span",
+          "depth": 2,
+          "prop": "marginTop",
+          "react": "2px",
+          "native": "0px",
+          "significant": true
+        }
+      ],
+      "spacing_deltas": [
+        {
+          "tag": "label",
+          "depth": 1,
+          "prop": "alignItems",
+          "react": "flex-start",
+          "native": "center",
+          "significant": false
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "prop": "marginTop",
+          "react": "2px",
+          "native": "0px",
+          "significant": true
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "alignItems",
+          "react": "center",
+          "native": "normal",
+          "significant": false
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "justifyContent",
+          "react": "center",
+          "native": "normal",
+          "significant": false
+        }
+      ],
+      "size_deltas": [
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "width",
+          "react": "12px",
+          "native": "45.4219px",
+          "significant": true
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "height",
+          "react": "12px",
+          "native": "20px",
+          "significant": true
+        }
+      ],
+      "significant_pair_deltas": [
+        {
+          "tag": "label",
+          "depth": 1,
+          "role": null,
+          "deltas": [
+            {
+              "prop": "display",
+              "react": "flex",
+              "native": "inline-flex",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "role": "checkbox",
+          "deltas": [
+            {
+              "prop": "marginTop",
+              "react": "2px",
+              "native": "0px",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.97 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.97 0 0)",
+              "significant": true
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "role": null,
+          "deltas": [
+            {
+              "prop": "display",
+              "react": "flex",
+              "native": "block",
+              "significant": true
+            },
+            {
+              "prop": "width",
+              "react": "12px",
+              "native": "45.4219px",
+              "significant": true
+            },
+            {
+              "prop": "height",
+              "react": "12px",
+              "native": "20px",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "oklch(0.97 0 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "oklch(0.97 0 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            }
+          ]
+        }
+      ],
+      "caught": true,
+      "caught_reason": {
+        "missing_checkmark_element": true,
+        "literal_padding_delta_present": false,
+        "spacing_delta_present": true,
+        "size_delta_present": true
+      }
+    },
+    "switch": {
+      "reactElementCount": 3,
+      "nativeElementCount": 2,
+      "missing_in_native": [
+        {
+          "tag": "div",
+          "depth": 1,
+          "role": null,
+          "ariaHidden": null,
+          "className": "absolute top-0 bottom-0 shadow-[0_0_1px_0.5px_var(--color-kumo-shadow-edge),0_1px_2px_var(--color-kumo-shadow-drop)] w-4.5 rounded-[5px] supports-[corner-shape:squircle]:rounded-[10px] [corner-shape:squircle] bg-kumo-base dark:bg-blue-300 transition-all duration-150 ease-out motion-reduce:transition-none left-4.5",
+          "styles": {
+            "display": "block",
+            "position": "absolute",
+            "width": "18px",
+            "height": "18px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "10px",
+            "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0 0 0 / 0.12) 0px 0px 1px 0.5px, oklch(0 0 0 / 0.08) 0px 1px 2px 0px",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "24px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "input",
+          "depth": 0,
+          "role": null,
+          "ariaHidden": "true",
+          "className": "",
+          "styles": {
+            "display": "block",
+            "position": "fixed",
+            "width": "1px",
+            "height": "1px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "-1px",
+            "marginRight": "-1px",
+            "marginBottom": "-1px",
+            "marginLeft": "-1px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "none",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "24px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        }
+      ],
+      "background_deltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "prop": "backgroundColor",
+          "react": "oklch(0.623 0.214 259.815)",
+          "native": "rgba(0, 0, 0, 0)",
+          "significant": true
+        }
+      ],
+      "size_deltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "prop": "width",
+          "react": "36px",
+          "native": "40px",
+          "significant": true
+        },
+        {
+          "tag": "button",
+          "depth": 0,
+          "prop": "height",
+          "react": "18px",
+          "native": "20px",
+          "significant": true
+        }
+      ],
+      "significant_pair_deltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "role": "switch",
+          "deltas": [
+            {
+              "prop": "width",
+              "react": "36px",
+              "native": "40px",
+              "significant": true
+            },
+            {
+              "prop": "height",
+              "react": "18px",
+              "native": "20px",
+              "significant": true
+            },
+            {
+              "prop": "backgroundColor",
+              "react": "oklch(0.623 0.214 259.815)",
+              "native": "rgba(0, 0, 0, 0)",
+              "significant": true
+            },
+            {
+              "prop": "borderRadius",
+              "react": "10px",
+              "native": "5px",
+              "significant": true
+            },
+            {
+              "prop": "boxShadow",
+              "react": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.546 0.245 262.881) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+              "native": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.935 0 0) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+              "significant": true
+            }
+          ]
+        }
+      ],
+      "caught": true,
+      "caught_reason": {
+        "track_background_delta": true,
+        "track_size_delta": true,
+        "missing_track_element": true
+      }
+    },
+    "button": {
+      "reactElementCount": 1,
+      "nativeElementCount": 1,
+      "significant_delta_count": 0,
+      "missing_in_native": [],
+      "extra_in_native": [],
+      "significant_pair_deltas": [],
+      "clean": true
+    }
+  },
+  "catches_known_defects": true,
+  "false_positive_on_button": false,
+  "notes": [
+    "getComputedStyle diff pinpoints WRONG values (spacing/size/background/color) precisely, with numeric before/after.",
+    "BLUNT on the checkbox 'wrong padding': there is NO literal padding delta (both boxes are padding:0). The real native spacing defect surfaces as marginTop 2px->0px (React mt-0.5 vs native 0), align-items flex-start->center on the label, and a box width/height delta. A gate keyed only on 'padding' would MISS it; keying on the padding+margin+alignment+size family catches it.",
+    "MISSING structural elements (checkbox checkmark svg) are only caught because the LCS alignment leaves them unmatched -> a pure per-pair style diff alone would MISS them; the 'missing_in_native' list is doing that work (overlaps with E03 dom-structure-diff).",
+    "Switch 'missing track' shows up as a backgroundColor delta (React checked track bg-blue-500 vs native transparent) and a width/height delta (React h-4.5 w-9 vs native h-4 w-8), not as a missing element.",
+    "Requires the SAME stylesheet + a real layout engine; deterministic (no AA/font sampling like pixel-diff). Per-component cost = one mount pair; fast.",
+    "Weakness: alignment is heuristic. Deeply restructured trees can misalign and inflate deltas; needs role/testid anchors for complex components."
+  ],
+  "raw_full_diff": {
+    "checkbox": {
+      "reactElementCount": 8,
+      "nativeElementCount": 3,
+      "matchedPairs": 3,
+      "missingInNative": [
+        {
+          "tag": "div",
+          "depth": 0,
+          "role": null,
+          "ariaHidden": null,
+          "className": "inline-flex",
+          "styles": {
+            "display": "inline-flex",
+            "position": "static",
+            "width": "69.4219px",
+            "height": "20px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "24px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "svg",
+          "depth": 4,
+          "role": null,
+          "ariaHidden": null,
+          "className": "",
+          "styles": {
+            "display": "block",
+            "position": "static",
+            "width": "12px",
+            "height": "12px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "oklch(0.97 0 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "oklch(0.97 0 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "path",
+          "depth": 5,
+          "role": null,
+          "ariaHidden": null,
+          "className": "",
+          "styles": {
+            "display": "inline",
+            "position": "static",
+            "width": "auto",
+            "height": "auto",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "oklch(0.97 0 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "oklch(0.97 0 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "input",
+          "depth": 2,
+          "role": null,
+          "ariaHidden": "true",
+          "className": "",
+          "styles": {
+            "display": "block",
+            "position": "fixed",
+            "width": "1px",
+            "height": "1px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "-1px",
+            "marginRight": "-1px",
+            "marginBottom": "-1px",
+            "marginLeft": "-1px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "none",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "role": null,
+          "ariaHidden": null,
+          "className": "inline-flex items-center gap-1",
+          "styles": {
+            "display": "flex",
+            "position": "static",
+            "width": "45.4219px",
+            "height": "20px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "20px",
+            "alignItems": "center",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        }
+      ],
+      "extraInNative": [],
+      "pairDeltas": [
+        {
+          "tag": "label",
+          "depth": 1,
+          "role": null,
+          "deltas": [
+            {
+              "prop": "display",
+              "react": "flex",
+              "native": "inline-flex",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "alignItems",
+              "react": "flex-start",
+              "native": "center",
+              "significant": false
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "role": "checkbox",
+          "deltas": [
+            {
+              "prop": "marginTop",
+              "react": "2px",
+              "native": "0px",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.97 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.97 0 0)",
+              "significant": true
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "role": null,
+          "deltas": [
+            {
+              "prop": "display",
+              "react": "flex",
+              "native": "block",
+              "significant": true
+            },
+            {
+              "prop": "width",
+              "react": "12px",
+              "native": "45.4219px",
+              "significant": true
+            },
+            {
+              "prop": "height",
+              "react": "12px",
+              "native": "20px",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "oklch(0.97 0 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "oklch(0.97 0 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "alignItems",
+              "react": "center",
+              "native": "normal",
+              "significant": false
+            },
+            {
+              "prop": "justifyContent",
+              "react": "center",
+              "native": "normal",
+              "significant": false
+            }
+          ]
+        }
+      ],
+      "significantPairDeltas": [
+        {
+          "tag": "label",
+          "depth": 1,
+          "role": null,
+          "deltas": [
+            {
+              "prop": "display",
+              "react": "flex",
+              "native": "inline-flex",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "role": "checkbox",
+          "deltas": [
+            {
+              "prop": "marginTop",
+              "react": "2px",
+              "native": "0px",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.97 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "rgb(0, 0, 0)",
+              "native": "oklch(0.97 0 0)",
+              "significant": true
+            }
+          ]
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "role": null,
+          "deltas": [
+            {
+              "prop": "display",
+              "react": "flex",
+              "native": "block",
+              "significant": true
+            },
+            {
+              "prop": "width",
+              "react": "12px",
+              "native": "45.4219px",
+              "significant": true
+            },
+            {
+              "prop": "height",
+              "react": "12px",
+              "native": "20px",
+              "significant": true
+            },
+            {
+              "prop": "borderTopColor",
+              "react": "oklch(0.97 0 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            },
+            {
+              "prop": "color",
+              "react": "oklch(0.97 0 0)",
+              "native": "oklch(0.205 0 0)",
+              "significant": true
+            }
+          ]
+        }
+      ],
+      "paddingDeltas": [],
+      "marginDeltas": [
+        {
+          "tag": "span",
+          "depth": 2,
+          "prop": "marginTop",
+          "react": "2px",
+          "native": "0px",
+          "significant": true
+        }
+      ],
+      "spacingDeltas": [
+        {
+          "tag": "label",
+          "depth": 1,
+          "prop": "alignItems",
+          "react": "flex-start",
+          "native": "center",
+          "significant": false
+        },
+        {
+          "tag": "span",
+          "depth": 2,
+          "prop": "marginTop",
+          "react": "2px",
+          "native": "0px",
+          "significant": true
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "alignItems",
+          "react": "center",
+          "native": "normal",
+          "significant": false
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "justifyContent",
+          "react": "center",
+          "native": "normal",
+          "significant": false
+        }
+      ],
+      "backgroundDeltas": [],
+      "sizeDeltas": [
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "width",
+          "react": "12px",
+          "native": "45.4219px",
+          "significant": true
+        },
+        {
+          "tag": "span",
+          "depth": 3,
+          "prop": "height",
+          "react": "12px",
+          "native": "20px",
+          "significant": true
+        }
+      ]
+    },
+    "switch": {
+      "reactElementCount": 3,
+      "nativeElementCount": 2,
+      "matchedPairs": 1,
+      "missingInNative": [
+        {
+          "tag": "div",
+          "depth": 1,
+          "role": null,
+          "ariaHidden": null,
+          "className": "absolute top-0 bottom-0 shadow-[0_0_1px_0.5px_var(--color-kumo-shadow-edge),0_1px_2px_var(--color-kumo-shadow-drop)] w-4.5 rounded-[5px] supports-[corner-shape:squircle]:rounded-[10px] [corner-shape:squircle] bg-kumo-base dark:bg-blue-300 transition-all duration-150 ease-out motion-reduce:transition-none left-4.5",
+          "styles": {
+            "display": "block",
+            "position": "absolute",
+            "width": "18px",
+            "height": "18px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginLeft": "0px",
+            "backgroundColor": "rgb(255, 255, 255)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "solid",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "10px",
+            "boxShadow": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0 0 0 / 0.12) 0px 0px 1px 0.5px, oklch(0 0 0 / 0.08) 0px 1px 2px 0px",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "24px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        },
+        {
+          "tag": "input",
+          "depth": 0,
+          "role": null,
+          "ariaHidden": "true",
+          "className": "",
+          "styles": {
+            "display": "block",
+            "position": "fixed",
+            "width": "1px",
+            "height": "1px",
+            "paddingTop": "0px",
+            "paddingRight": "0px",
+            "paddingBottom": "0px",
+            "paddingLeft": "0px",
+            "marginTop": "-1px",
+            "marginRight": "-1px",
+            "marginBottom": "-1px",
+            "marginLeft": "-1px",
+            "backgroundColor": "rgba(0, 0, 0, 0)",
+            "backgroundImage": "none",
+            "borderTopWidth": "0px",
+            "borderRightWidth": "0px",
+            "borderBottomWidth": "0px",
+            "borderLeftWidth": "0px",
+            "borderStyle": "none",
+            "borderTopColor": "rgb(0, 0, 0)",
+            "borderRadius": "0px",
+            "boxShadow": "none",
+            "color": "rgb(0, 0, 0)",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "24px",
+            "alignItems": "normal",
+            "justifyContent": "normal",
+            "opacity": "1",
+            "visibility": "visible",
+            "boxSizing": "border-box"
+          }
+        }
+      ],
+      "extraInNative": [
+        {
+          "tag": "span",
+          "depth": 1,
+          "role": null
+        }
+      ],
+      "pairDeltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "role": "switch",
+          "deltas": [
+            {
+              "prop": "width",
+              "react": "36px",
+              "native": "40px",
+              "significant": true
+            },
+            {
+              "prop": "height",
+              "react": "18px",
+              "native": "20px",
+              "significant": true
+            },
+            {
+              "prop": "backgroundColor",
+              "react": "oklch(0.623 0.214 259.815)",
+              "native": "rgba(0, 0, 0, 0)",
+              "significant": true
+            },
+            {
+              "prop": "borderRadius",
+              "react": "10px",
+              "native": "5px",
+              "significant": true
+            },
+            {
+              "prop": "boxShadow",
+              "react": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.546 0.245 262.881) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+              "native": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.935 0 0) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+              "significant": true
+            }
+          ]
+        }
+      ],
+      "significantPairDeltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "role": "switch",
+          "deltas": [
+            {
+              "prop": "width",
+              "react": "36px",
+              "native": "40px",
+              "significant": true
+            },
+            {
+              "prop": "height",
+              "react": "18px",
+              "native": "20px",
+              "significant": true
+            },
+            {
+              "prop": "backgroundColor",
+              "react": "oklch(0.623 0.214 259.815)",
+              "native": "rgba(0, 0, 0, 0)",
+              "significant": true
+            },
+            {
+              "prop": "borderRadius",
+              "react": "10px",
+              "native": "5px",
+              "significant": true
+            },
+            {
+              "prop": "boxShadow",
+              "react": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.546 0.245 262.881) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+              "native": "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, oklch(0.935 0 0) 0px 0px 0px 1px, rgba(0, 0, 0, 0) 0px 0px 0px 0px",
+              "significant": true
+            }
+          ]
+        }
+      ],
+      "paddingDeltas": [],
+      "marginDeltas": [],
+      "spacingDeltas": [],
+      "backgroundDeltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "prop": "backgroundColor",
+          "react": "oklch(0.623 0.214 259.815)",
+          "native": "rgba(0, 0, 0, 0)",
+          "significant": true
+        }
+      ],
+      "sizeDeltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "prop": "width",
+          "react": "36px",
+          "native": "40px",
+          "significant": true
+        },
+        {
+          "tag": "button",
+          "depth": 0,
+          "prop": "height",
+          "react": "18px",
+          "native": "20px",
+          "significant": true
+        }
+      ]
+    },
+    "button": {
+      "reactElementCount": 1,
+      "nativeElementCount": 1,
+      "matchedPairs": 1,
+      "missingInNative": [],
+      "extraInNative": [],
+      "pairDeltas": [
+        {
+          "tag": "button",
+          "depth": 0,
+          "role": null,
+          "deltas": []
+        }
+      ],
+      "significantPairDeltas": [],
+      "paddingDeltas": [],
+      "marginDeltas": [],
+      "spacingDeltas": [],
+      "backgroundDeltas": [],
+      "sizeDeltas": []
+    }
+  }
+}

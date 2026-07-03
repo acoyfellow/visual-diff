@@ -1,0 +1,39 @@
+{
+  "name": "visual-diff",
+  "version": "0.1.0",
+  "description": "Framework-agnostic 3-tier visual-diff cascade: compare any two rendered DOM trees / screenshots (structure + computed style + pixels) for a fail-closed 1:1 verdict.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "proof": "node examples/self-proof.mjs"
+  },
+  "keywords": [
+    "visual-diff",
+    "visual-regression",
+    "pixelmatch",
+    "dom-diff",
+    "computed-style",
+    "screenshot",
+    "reftest",
+    "fidelity",
+    "cascade"
+  ],
+  "license": "MIT",
+  "author": "acoyfellow",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "pixelmatch": "^5.3.0",
+    "pngjs": "^7.0.0"
+  }
+}

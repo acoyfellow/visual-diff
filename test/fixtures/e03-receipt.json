@@ -1,0 +1,256 @@
+{
+  "schemaVersion": "e03.dom-structure-diff/v1",
+  "experiment": "03-dom-structure-diff",
+  "observedAt": "2026-07-02T15:28:49.372Z",
+  "method": "SSR render React canonical (@cloudflare/kumo dist + react-dom/server) and native svelte (svelte/compiler server + svelte/server); load each rendered fragment into the pinned Playwright chromium (\"Google Chrome for Testing\") via raw CDP; extract a normalized DOM tree (tag, role, semantic attrs, child presence) + a real accessibility-tree (ARIA) outline; diff react-vs-native, focusing the pass/fail decision on the interactive control subtree (where the checkmark svg / switch thumb live). Structural equivalence = identical element multiset inside the control subtree.",
+  "chromium": "/Users/jcoeyman/Library/Caches/ms-playwright/chromium-1228/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "inputs": {
+    "reactCanonical": "@cloudflare/kumo (dist chunks)",
+    "nativeSvelte": "kumo-compiler/generated/libraries/svelte/components",
+    "fixtures": [
+      {
+        "name": "checkbox",
+        "kind": "known-defect",
+        "react": {
+          "checked": true,
+          "label": "Accept terms"
+        },
+        "svelte": {
+          "checked": true,
+          "label": "Accept terms"
+        }
+      },
+      {
+        "name": "switch",
+        "kind": "known-defect",
+        "variant": "small",
+        "react": {
+          "aria-label": "Small",
+          "size": "sm",
+          "checked": true
+        },
+        "svelte": {
+          "aria-label": "Small",
+          "size": "sm",
+          "checked": true
+        }
+      },
+      {
+        "name": "button",
+        "kind": "known-good",
+        "react": {
+          "children": "Save"
+        },
+        "svelte": {
+          "__consumerContent": "Save",
+          "data-probe": "native",
+          "name": "intent",
+          "value": "save"
+        }
+      }
+    ]
+  },
+  "perComponent": [
+    {
+      "name": "checkbox",
+      "kind": "known-defect",
+      "structurallyEquivalent": false,
+      "elementCount": {
+        "react": 8,
+        "native": 3,
+        "delta": 5
+      },
+      "controlSubtree": {
+        "react": {
+          "tag": "span",
+          "role": "checkbox",
+          "descendantCount": 3,
+          "tags": {
+            "span": 1,
+            "svg": 1,
+            "path": 1
+          }
+        },
+        "native": {
+          "tag": "span",
+          "role": "checkbox",
+          "descendantCount": 0,
+          "tags": {}
+        },
+        "missingInNative": {
+          "span": 1,
+          "svg": 1,
+          "path": 1
+        },
+        "extraInNative": {}
+      },
+      "wholeTree": {
+        "missingInNative": {
+          "div": 1,
+          "span": 1,
+          "svg": 1,
+          "path": 1,
+          "input": 1
+        },
+        "extraInNative": {}
+      },
+      "roles": {
+        "react": {
+          "(label)": 1,
+          "checkbox": 2,
+          "(graphic)": 1
+        },
+        "native": {
+          "(label)": 1,
+          "checkbox": 1
+        }
+      },
+      "signals": {
+        "missingCheckmarkSvg": true,
+        "missingThumbOrTrack": true,
+        "missingControlChildren": true
+      },
+      "ariaSnapshot": {
+        "react": [
+          "  - LabelText",
+          "    - checkbox",
+          "      - image",
+          "    - StaticText \"Accept terms\"",
+          "      - InlineTextBox \"Accept terms\""
+        ],
+        "native": [
+          "  - LabelText",
+          "    - checkbox",
+          "    - StaticText \"Accept terms\"",
+          "      - InlineTextBox \"Accept terms\""
+        ]
+      }
+    },
+    {
+      "name": "switch",
+      "kind": "known-defect",
+      "variant": "small",
+      "structurallyEquivalent": false,
+      "elementCount": {
+        "react": 2,
+        "native": 1,
+        "delta": 1
+      },
+      "controlSubtree": {
+        "react": {
+          "tag": "button",
+          "role": "switch",
+          "descendantCount": 1,
+          "tags": {
+            "div": 1
+          }
+        },
+        "native": {
+          "tag": "button",
+          "role": "switch",
+          "descendantCount": 0,
+          "tags": {}
+        },
+        "missingInNative": {
+          "div": 1
+        },
+        "extraInNative": {}
+      },
+      "wholeTree": {
+        "missingInNative": {
+          "div": 1
+        },
+        "extraInNative": {}
+      },
+      "roles": {
+        "react": {
+          "switch": 1
+        },
+        "native": {
+          "switch": 1
+        }
+      },
+      "signals": {
+        "missingCheckmarkSvg": false,
+        "missingThumbOrTrack": true,
+        "missingControlChildren": true
+      },
+      "ariaSnapshot": {
+        "react": [
+          "  - switch \"Small\""
+        ],
+        "native": [
+          "  - switch"
+        ]
+      }
+    },
+    {
+      "name": "button",
+      "kind": "known-good",
+      "structurallyEquivalent": true,
+      "elementCount": {
+        "react": 2,
+        "native": 2,
+        "delta": 0
+      },
+      "controlSubtree": {
+        "react": {
+          "tag": "button",
+          "role": "button",
+          "descendantCount": 1,
+          "tags": {
+            "span": 1
+          }
+        },
+        "native": {
+          "tag": "button",
+          "role": "button",
+          "descendantCount": 1,
+          "tags": {
+            "span": 1
+          }
+        },
+        "missingInNative": {},
+        "extraInNative": {}
+      },
+      "wholeTree": {
+        "missingInNative": {},
+        "extraInNative": {}
+      },
+      "roles": {
+        "react": {
+          "button": 1
+        },
+        "native": {
+          "button": 1
+        }
+      },
+      "signals": {
+        "missingCheckmarkSvg": false,
+        "missingThumbOrTrack": false,
+        "missingControlChildren": false
+      },
+      "ariaSnapshot": {
+        "react": [
+          "  - button \"Save\"",
+          "    - StaticText \"Save\"",
+          "      - InlineTextBox \"Save\""
+        ],
+        "native": [
+          "  - button \"Save\"",
+          "    - StaticText \"Save\"",
+          "      - InlineTextBox \"Save\""
+        ]
+      }
+    }
+  ],
+  "catches_known_defects": true,
+  "false_positive_on_button": false,
+  "detail": {
+    "checkbox_missing_checkmark_svg": true,
+    "switch_missing_thumb_or_track": true,
+    "button_structurally_equivalent": true
+  },
+  "durationMs": 5160,
+  "notes": "PROVEN. checkbox: react control subtree has {span,svg,path}, native has {} -> missing checkmark svg (defect caught). switch (small variant, the one recorded in the svelte manifest): react control has a thumb <div>, native emits a bare <button role=switch> with zero descendants -> missing thumb (defect caught). button: both render button>span, control subtrees identical -> structurally equivalent, no false alarm. ARIA-tree bonus (observed): it INCONSISTENTLY corroborates. checkbox svg surfaces as an \"image\" AX node that native lacks (ARIA happens to catch it); but the switch thumb is aria-hidden and never appears in the AX tree, so ARIA only flags switch via a missing accessible NAME, not the missing thumb. ARIA-snapshot is therefore an unreliable proxy for presentational structural defects; the DOM element-multiset diff of the control subtree is the direct, reliable signal. LIMITATION: this method is blind to visual/style defects (wrong padding, wrong color, invisible-but-present nodes); it only catches MISSING/EXTRA structural elements. Pair with computed-style (E02) and/or pixel-diff (E01) for full 1:1 fidelity. Method is deterministic (SSR + structural compare, no pixel/AA noise)."
+}
