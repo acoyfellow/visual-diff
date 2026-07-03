@@ -21,6 +21,14 @@ export { verify } from './verify.js';
 // Continuous design<->implementation fidelity score (structure+style; a companion
 // metric alongside cascade's fail-closed pass/fail, not a replacement for it)
 export { fidelity } from './fidelity.js';
+// Tier D — semantic/accessibility (opt-in via cascade's { a11y: true })
+export { diffA11y } from './a11y.js';
+// Video/temporal diff: the cascade run over a sequence of frames
+export { cascadeSequence } from './temporal.js';
+// Signed, tamper-evident verdict receipts (shared-secret HMAC integrity)
+export { signReceipt, verifyReceipt } from './receipt.js';
+// Opt-in perceptual pixel metric (windowed SSIM) — never wired into cascade by default
+export { diffPerceptual, ssim } from './perceptual.js';
 // Browser extraction (optional; needs a pinned Playwright Chromium)
 export { openBrowser, loadAndExtract, page, walkExpression } from './extract.js';
 export { resolveChromium } from './browser.js';

@@ -10,16 +10,22 @@
 import { diffStructure } from './structure.js';
 import { diffStyle } from './style.js';
 import { diffPixels } from './pixels.js';
+import { diffA11y } from './a11y.js';
 
 /**
- * Run all three tiers on one baseline/candidate pair.
+ * Run the tiers on one baseline/candidate pair. A and B always run; C runs
+ * when PNGs are supplied; D (semantic/a11y) is OPT-IN via `opts.a11y` and is
+ * omitted from `tiers`/the verdict entirely unless requested — the default
+ * 3-tier contract is unchanged for every existing caller.
  *
  * @param {Object} baseline   normalized render (from extract.js)
  * @param {Object} candidate  normalized render
- * @param {{baselinePng?, candidatePng?, style?, pixels?}} [opts]
+ * @param {{baselinePng?, candidatePng?, style?, pixels?, a11y?:boolean}} [opts]
  *   PNGs are optional; when omitted Tier C is skipped (recorded as `null`) and
- *   the verdict is A AND B only. Pass PNGs to get the full 3-tier verdict.
- * @returns {{pass:boolean, A, B, C:(Object|null), tiers:{A:boolean,B:boolean,C:(boolean|null)}}}
+ *   the verdict is A AND B only. Pass `a11y: true` to add Tier D (semantic/aria)
+ *   to the fail-closed AND — it catches a defect A/B/C cannot see (a correct
+ *   look with a broken aria-checked/role), but requires `elements[].attrs`.
+ * @returns {{pass:boolean, A, B, C:(Object|null), D:(Object|null), tiers:Object}}
  */
 export function cascade(baseline, candidate, opts = {}) {
   const A = diffStructure(baseline, candidate);
@@ -27,15 +33,16 @@ export function cascade(baseline, candidate, opts = {}) {
   const C = (opts.baselinePng && opts.candidatePng)
     ? diffPixels(opts.baselinePng, opts.candidatePng, opts.pixels)
     : null;
+  const D = opts.a11y ? diffA11y(baseline, candidate) : null;
 
   const cPass = C == null ? true : C.pass;
-  const pass = A.pass && B.pass && cPass;
+  const dPass = D == null ? true : D.pass;
+  const pass = A.pass && B.pass && cPass && dPass;
 
-  return {
-    pass,
-    A, B, C,
-    tiers: { A: A.pass, B: B.pass, C: C == null ? null : C.pass },
-  };
+  const tiers = { A: A.pass, B: B.pass, C: C == null ? null : C.pass };
+  if (opts.a11y) tiers.D = D.pass; // only present when requested — default shape is unchanged
+
+  return { pass, A, B, C, D, tiers };
 }
 
 /**
