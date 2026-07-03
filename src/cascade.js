@@ -11,27 +11,34 @@ import { diffStructure } from './structure.js';
 import { diffStyle } from './style.js';
 import { diffPixels } from './pixels.js';
 import { diffA11y } from './a11y.js';
+import { diffPerceptual } from './perceptual.js';
 
 /**
  * Run the tiers on one baseline/candidate pair. A and B always run; C runs
- * when PNGs are supplied; D (semantic/a11y) is OPT-IN via `opts.a11y` and is
+ * when PNGs are supplied (raw pixelmatch by default, or perceptual SSIM when
+ * `opts.perceptual` is set); D (semantic/a11y) is OPT-IN via `opts.a11y` and is
  * omitted from `tiers`/the verdict entirely unless requested — the default
  * 3-tier contract is unchanged for every existing caller.
  *
  * @param {Object} baseline   normalized render (from extract.js)
  * @param {Object} candidate  normalized render
- * @param {{baselinePng?, candidatePng?, style?, pixels?, a11y?:boolean}} [opts]
+ * @param {{baselinePng?, candidatePng?, style?, pixels?, a11y?:boolean, perceptual?:boolean}} [opts]
  *   PNGs are optional; when omitted Tier C is skipped (recorded as `null`) and
  *   the verdict is A AND B only. Pass `a11y: true` to add Tier D (semantic/aria)
  *   to the fail-closed AND — it catches a defect A/B/C cannot see (a correct
  *   look with a broken aria-checked/role), but requires `elements[].attrs`.
+ *   Pass `perceptual: true` to swap Tier C from strict pixelmatch to a
+ *   windowed-SSIM metric that suppresses sub-visual anti-alias noise while
+ *   still flagging a real shift (opts.pixels is then forwarded as { minSsim }).
  * @returns {{pass:boolean, A, B, C:(Object|null), D:(Object|null), tiers:Object}}
  */
 export function cascade(baseline, candidate, opts = {}) {
   const A = diffStructure(baseline, candidate);
   const B = diffStyle(baseline, candidate, opts.style);
   const C = (opts.baselinePng && opts.candidatePng)
-    ? diffPixels(opts.baselinePng, opts.candidatePng, opts.pixels)
+    ? (opts.perceptual
+      ? diffPerceptual(opts.baselinePng, opts.candidatePng, opts.pixels)
+      : diffPixels(opts.baselinePng, opts.candidatePng, opts.pixels))
     : null;
   const D = opts.a11y ? diffA11y(baseline, candidate) : null;
 
