@@ -1,53 +1,53 @@
 # visual-diff
 
-A **framework-agnostic 3-tier visual-diff cascade** for deciding whether two
-rendered UIs are the *same* — pixel-for-pixel, and for the right reasons.
+A framework-agnostic 3-tier cascade for deciding whether two rendered UIs are
+the same, pixel-for-pixel and for reasons you can inspect.
 
-Compare any two rendered DOM trees / screenshots (React vs Svelte, old build vs
-new build, design vs implementation — it does not care) and get a **fail-closed
-"1:1" verdict** backed by three independent tiers:
+Compare two rendered DOM trees or screenshots (React against Svelte, an old
+build against a new one, design against implementation) and get a fail-closed
+"1:1" verdict from three independent tiers:
 
-| Tier | Name | What it checks | What it catches |
-|------|------|----------------|-----------------|
-| **A** | DOM structure | element-multiset of the control subtree + whole tree | **missing / extra elements** (e.g. a checkbox with no checkmark) |
-| **B** | Computed style | aligned per-element `getComputedStyle` deltas | wrong padding / size / color / border — *tells you WHAT differs* |
-| **C** | Pixel | `pixelmatch` over the content bounding box | the literal 1:1 look |
+| Tier | Name | Checks | Example it catches |
+|------|------|--------|--------------------|
+| A | DOM structure | element-multiset of the control subtree and whole tree | a missing or extra element, such as a checkbox with no checkmark |
+| B | Computed style | aligned per-element `getComputedStyle` deltas | wrong padding, size, color, or border, and names the property |
+| C | Pixel | `pixelmatch` over the content bounding box | the literal look |
 
-`PASS = A AND B AND C`. No single tier is honest alone.
+A pair passes when all three pass: `PASS = A AND B AND C`.
 
-## Why a cascade (the methodology)
+## Why a cascade
 
-This library exists because the *usual* checks lie:
+Each tier covers a blind spot the others have. Two checks that seemed enough
+on their own each let a real defect through:
 
-- **Class-string equality** passed while a checkbox rendered **with no
-  checkmark** — the class was right, the element was gone.
-- **A human screenshot-glance** false-positived "looks fixed."
+- Class-string equality passed while a checkbox rendered with no checkmark. The
+  class was right; the element was gone.
+- A human screenshot glance reported "looks fixed" when it was not.
 
-Each tier covers the others' blind spots, so only the fail-closed **AND** of all
-three is trustworthy:
+The three tiers fail on different things:
 
-- **A (structure)** is fail-closed on missing/extra elements, but blind to style
-  (an invisible-but-present node passes A).
-- **B (style)** names the exact property that differs, but is blind to a
-  correctly-styled-but-structurally-wrong tree.
-- **C (pixels)** is the final literal proof, but blind to *why* (missing element
-  vs recolor vs 1px shift all look the same).
+- A (structure) catches missing and extra elements but is blind to style, so an
+  invisible-but-present node passes it.
+- B (style) names the property that differs but is blind to a correctly-styled
+  tree with the wrong structure.
+- C (pixels) is the literal proof but cannot say why: a missing element, a
+  recolor, and a 1px shift all look the same to it.
 
-Two more principles make it reliable:
+Two mechanisms keep the cascade from producing false diffs:
 
-1. **`display:contents` flattening.** Wrapper elements that contribute no box and
-   no layout (common in React output) are flattened out before comparison, so
-   benign content-wrappers don't create false structural diffs — while genuinely
-   missing *boxed* elements are still caught.
-2. **The sanity-anchor pattern.** A fidelity gate you can't trust unless it still
-   (a) **PASSES** a pair you *know* is identical and (b) **FLAGS** a pair you
-   *know* is broken. `sanityCheck()` runs the cascade over labelled anchors and
-   fails closed if either expectation is violated — proving the harness is
-   neither rubber-stamping nor over-strict.
+1. `display:contents` flattening. Wrapper elements that contribute no box and no
+   layout (common in React output) are flattened before comparison, so a benign
+   content-wrapper does not register as a structural diff. A missing boxed
+   element still does.
+2. The sanity-anchor pattern. A gate is only trustworthy if it still passes a
+   pair known to be identical and flags a pair known to be broken.
+   `sanityCheck()` runs the cascade over labelled anchors and fails closed when
+   either expectation is violated, so the harness can neither rubber-stamp nor
+   over-flag.
 
-This mirrors the [Web Platform Tests reftest](https://web-platform-tests.org/writing-tests/reftests.html)
-blueprint (`rel=match`/`mismatch` + fuzzy two-axis pixel match) that browser
-vendors themselves use for visual equivalence.
+This follows the [Web Platform Tests reftest](https://web-platform-tests.org/writing-tests/reftests.html)
+blueprint (`rel=match`/`mismatch` plus a fuzzy two-axis pixel match) that
+browser vendors use for visual equivalence.
 
 ## Install
 
@@ -144,7 +144,8 @@ if (!ok) throw new Error('gate is untrustworthy: ' + violations.join('; '));
 
 `bin/visual-diff.mjs` (installed as `visual-diff` when this package is
 installed globally or run via `npx`) wraps `verify()` and the browser
-extractor for any pipeline that can shell out — not just Node/agent callers.
+extractor, so any pipeline that can shell out can use it, not only Node or
+agent callers.
 
 ```sh
 npx @acoyfellow/visual-diff baseline.html candidate.html
@@ -185,18 +186,18 @@ design.
 
 ## API
 
-- `diffStructure(baseline, candidate)` → Tier A verdict
-- `diffStyle(baseline, candidate, { tol, props })` → Tier B verdict
-- `diffPixels(baselinePng, candidatePng, { threshold, includeAA, flagPct })` → Tier C verdict
-- `cascade(baseline, candidate, { baselinePng, candidatePng, style, pixels })` → combined verdict
-- `sanityCheck(anchors, opts)` → fail-closed anchor validation
-- `verify(before, after, opts)` → `{ verdict: '1:1'|'BROKEN', pass, tiers, why }` — an agent/CI-shaped narration over `cascade()` (same verdict, no new judgment); `why` names the failing tier when `pass` is false
-- `fidelity(baseline, candidate, { style })` → `{ score, tiers: { structure, style }, explain }` — a continuous, monotonic, self-explaining structure+style closeness score (0–1); a companion metric alongside `cascade()`'s fail-closed pass/fail, not a replacement for it (pixel tier excluded — no PNGs required)
-- `openBrowser({ viewport, chromium })` → CDP browser handle
-- `loadAndExtract(browser, html, { tmpDir, name, viewport, cssHref, mountSelector })` → `{ struct, png }`
-- `renderReport(cards, { title, subtitle })` → HTML string
-- `renderMarkdown(cards, { title })` → GitHub-flavored markdown (a compact summary table + collapsible per-failure detail; PR-comment shaped, no embedded images)
-- `badgeFromFidelity(fidelityResult, { label })` / `badgeFromVerify(verifyResult, { label })` → shields.io endpoint-badge JSON (`{schemaVersion, label, message, color}`)
+- `diffStructure(baseline, candidate)` returns a Tier A verdict.
+- `diffStyle(baseline, candidate, { tol, props })` returns a Tier B verdict.
+- `diffPixels(baselinePng, candidatePng, { threshold, includeAA, flagPct })` returns a Tier C verdict.
+- `cascade(baseline, candidate, { baselinePng, candidatePng, style, pixels })` returns the combined verdict.
+- `sanityCheck(anchors, opts)` runs fail-closed anchor validation.
+- `verify(before, after, opts)` returns `{ verdict: '1:1'|'BROKEN', pass, tiers, why }`. It narrates `cascade()` in an agent/CI shape with the same verdict; `why` names the failing tier when `pass` is false.
+- `fidelity(baseline, candidate, { style })` returns `{ score, tiers: { structure, style }, explain }`. The score is a continuous, monotonic structure-plus-style closeness value from 0 to 1, meant to sit alongside `cascade()`'s pass/fail rather than replace it. It excludes the pixel tier and needs no PNGs.
+- `openBrowser({ viewport, chromium })` returns a CDP browser handle.
+- `loadAndExtract(browser, html, { tmpDir, name, viewport, cssHref, mountSelector })` returns `{ struct, png }`.
+- `renderReport(cards, { title, subtitle })` returns an HTML string.
+- `renderMarkdown(cards, { title })` returns GitHub-flavored markdown: a summary table plus collapsible per-failure detail, shaped for a PR comment, with no embedded images.
+- `badgeFromFidelity(fidelityResult, { label })` and `badgeFromVerify(verifyResult, { label })` return shields.io endpoint-badge JSON (`{schemaVersion, label, message, color}`).
 - helpers: `multisetDiff`, `alignLCS`, `numClose`, `contentBBox`, `resolveChromium`, `page`, `walkExpression`
 
 ## License
